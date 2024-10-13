@@ -103,7 +103,7 @@ class Scraper:
     def quit(self):
         self.driver.quit()
 
-    def load_data(self, num_times:int = 10):
+    def load_data(self, num_times:int = 1):
 
         load_more_button = self.wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="root"]/section/div/button')))
 
@@ -112,6 +112,19 @@ class Scraper:
             load_more_button.send_keys(Keys.ENTER)
             time.sleep(2)
 
+    def scrape_listing_result(self):
+
+        property_listings = self.wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="root"]/section/div/div[2]')))
+        ui_cards = property_listings.find_elements(By.CLASS_NAME, 'ui-card')
+
+        # property links.
+        property_links = []
+        # Loop over each ui card and get details.
+        for card in ui_cards:
+
+            # get href of the property.
+            href = card.find_element(By.TAG_NAME, 'a').get_attribute('href')
+            property_links.append(href)
 
 # Instantiate the scraper and keep it open for 10 seconds
 import time
@@ -119,8 +132,9 @@ if __name__ == "__main__":
     scraper_instance = Scraper()
     scraper_instance.search_property("Wollert","vic", 3750)
     scraper_instance.apply_filter_on_search(property_type_selected="House", parking_num=2)
-    time.sleep(5)  # Keep the browser open for 10 seconds
+    time.sleep(2)  # Keep the browser open for 10 seconds
     scraper_instance.load_data()
-    time.sleep(5)  # Keep the browser open for 10 seconds
+    time.sleep(2)  # Keep the browser open for 10 seconds
+    scraper_instance.scrape_listing_result()
     scraper_instance.quit()
 
