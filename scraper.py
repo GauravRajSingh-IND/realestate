@@ -7,10 +7,6 @@ from selenium.webdriver.common.keys import Keys
 
 from selenium.webdriver.support.ui import Select
 
-from selenium_stealth import stealth
-from soupsieve.css_types import Selector
-
-
 class Scraper:
 
     def __init__(self):
@@ -80,12 +76,29 @@ class Scraper:
             parking_selector = Select(parking_dropdown)
             parking_selector.select_by_visible_text(f"+{parking_num} Parking")
 
+
         # search property by suburb name.
         search = self.wait.until(
             EC.visibility_of_element_located((By.XPATH, '//*[@id="root"]/section/section[2]/form/div/div[2]/div[2]/button')))
         search.send_keys(Keys.ENTER)
         time.sleep(5)
 
+        # Sort the listing to recent first.
+        self.sort_by()
+
+    def sort_by(self):
+
+        # Sort the result by most recent listing.
+        sort_by_recent = self.wait.until(EC.visibility_of_element_located(
+            (By.XPATH, '//*[@id="root"]/section/section[2]/div[2]/div[2]/div[1]/div/select')))
+        sort_by_selector = Select(sort_by_recent)
+        sort_by_selector.select_by_visible_text("Most Recent Listing")
+
+        # sort by property live for auction.
+        for_auction = self.wait.until(EC.visibility_of_element_located(
+            (By.XPATH, '//*[@id="root"]/section/section[2]/div[2]/div[2]/div[2]/div/select')))
+        for_auction_selector = Select(for_auction)
+        for_auction_selector.select_by_visible_text('For Auction')
 
 
     def quit(self):
