@@ -100,9 +100,17 @@ class Scraper:
         for_auction_selector = Select(for_auction)
         for_auction_selector.select_by_visible_text('For Auction')
 
-
     def quit(self):
         self.driver.quit()
+
+    def load_data(self, num_times:int = 10):
+
+        load_more_button = self.wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="root"]/section/div/button')))
+
+        # load data.
+        for i in range(num_times):
+            load_more_button.send_keys(Keys.ENTER)
+            time.sleep(2)
 
 
 # Instantiate the scraper and keep it open for 10 seconds
@@ -111,6 +119,8 @@ if __name__ == "__main__":
     scraper_instance = Scraper()
     scraper_instance.search_property("Wollert","vic", 3750)
     scraper_instance.apply_filter_on_search(property_type_selected="House", parking_num=2)
-    time.sleep(10)  # Keep the browser open for 10 seconds
+    time.sleep(5)  # Keep the browser open for 10 seconds
+    scraper_instance.load_data()
+    time.sleep(5)  # Keep the browser open for 10 seconds
     scraper_instance.quit()
 
