@@ -50,19 +50,28 @@ class Scraper:
         search.send_keys(Keys.ENTER)
         time.sleep(5)
 
-    def apply_filter_on_search(self, property_type_selected:str):
+    def apply_filter_on_search(self, property_type_selected:str = None, bedrooms_size:int= None):
 
         # Select property type
-        property_type = self.wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="root"]/section/section[2]/form/div/div[2]/div[2]/div[1]/div/select')))
-        property_type_selector = Select(property_type)
-        property_type_selector.select_by_visible_text(property_type_selected)
-        time.sleep(5)
+        if property_type_selected is not None:
+            property_type = self.wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="root"]/section/section[2]/form/div/div[2]/div[2]/div[1]/div/select')))
+            property_type_selector = Select(property_type)
+            property_type_selector.select_by_visible_text(property_type_selected)
+            time.sleep(5)
+
+        # Select number of bedrooms.
+        if bedrooms_size is not None:
+            bedrooms_dropdown = self.wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="root"]/section/section[2]/form/div/div[2]/div[2]/div[2]/div/select')))
+            bedrooms_selector = Select(bedrooms_dropdown)
+            bedrooms_selector.select_by_visible_text(f"+{bedrooms_size} Bedrooms")
 
         # search property by suburb name.
         search = self.wait.until(
             EC.visibility_of_element_located((By.XPATH, '//*[@id="root"]/section/section[2]/form/div/div[2]/div[2]/button')))
         search.send_keys(Keys.ENTER)
         time.sleep(5)
+
+
 
     def quit(self):
         self.driver.quit()
@@ -73,7 +82,7 @@ import time
 if __name__ == "__main__":
     scraper_instance = Scraper()
     scraper_instance.search_property("Wollert","vic", 3750)
-    scraper_instance.apply_filter_on_search(property_type_selected="House")
+    scraper_instance.apply_filter_on_search(property_type_selected="House", bedrooms_size=2)
     time.sleep(10)  # Keep the browser open for 10 seconds
     scraper_instance.quit()
 
