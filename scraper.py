@@ -7,6 +7,8 @@ from selenium.webdriver.common.keys import Keys
 
 from selenium.webdriver.support.ui import Select
 
+import time
+
 class Scraper:
 
     def __init__(self):
@@ -25,7 +27,13 @@ class Scraper:
         self.wait = WebDriverWait(self.driver, 20)
 
     def search_property(self, suburb_name:str, state:str, postcode:int):
-
+        """
+        This function search for the property according to the input suburb name.
+        :param suburb_name: suburb name.
+        :param state: state name.
+        :param postcode: postcode number.
+        :return:
+        """
         # Click on find property button.
         find_property = self.wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="site"]/header[1]/div[2]/div[2]/div/div[2]/ul/li[3]/button')))
         find_property.click()
@@ -48,6 +56,15 @@ class Scraper:
 
     def apply_filter_on_search(self, property_type_selected:str = None, bedrooms_size:int= 0, bathroom_num: int = 0,
                                parking_num:int = 0):
+
+        """
+        This function apply filter on the search result.
+        :param property_type_selected: property type filter.
+        :param bedrooms_size: bedroom size filter
+        :param bathroom_num: bathroom size filter.
+        :param parking_num: number of parking
+        :return:
+        """
 
         # Select property type
         if property_type_selected is not None:
@@ -88,6 +105,10 @@ class Scraper:
 
     def sort_by(self):
 
+        """
+        This function sort the result by recent listing and live for auction.
+        :return:
+        """
         # Sort the result by most recent listing.
         sort_by_recent = self.wait.until(EC.visibility_of_element_located(
             (By.XPATH, '//*[@id="root"]/section/section[2]/div[2]/div[2]/div[1]/div/select')))
@@ -126,15 +147,5 @@ class Scraper:
             href = card.find_element(By.TAG_NAME, 'a').get_attribute('href')
             property_links.append(href)
 
-# Instantiate the scraper and keep it open for 10 seconds
-import time
-if __name__ == "__main__":
-    scraper_instance = Scraper()
-    scraper_instance.search_property("Wollert","vic", 3750)
-    scraper_instance.apply_filter_on_search(property_type_selected="House", parking_num=2)
-    time.sleep(2)  # Keep the browser open for 10 seconds
-    scraper_instance.load_data()
-    time.sleep(2)  # Keep the browser open for 10 seconds
-    scraper_instance.scrape_listing_result()
-    scraper_instance.quit()
+        return property_links
 
