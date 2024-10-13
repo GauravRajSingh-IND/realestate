@@ -50,7 +50,8 @@ class Scraper:
         search.send_keys(Keys.ENTER)
         time.sleep(5)
 
-    def apply_filter_on_search(self, property_type_selected:str = None, bedrooms_size:int= None):
+    def apply_filter_on_search(self, property_type_selected:str = None, bedrooms_size:int= 0, bathroom_num: int = 0,
+                               parking_num:int = 0):
 
         # Select property type
         if property_type_selected is not None:
@@ -60,10 +61,24 @@ class Scraper:
             time.sleep(5)
 
         # Select number of bedrooms.
-        if bedrooms_size is not None:
+        if bedrooms_size != 0:
             bedrooms_dropdown = self.wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="root"]/section/section[2]/form/div/div[2]/div[2]/div[2]/div/select')))
             bedrooms_selector = Select(bedrooms_dropdown)
             bedrooms_selector.select_by_visible_text(f"+{bedrooms_size} Bedrooms")
+
+        # Select number of bathroom.
+        if bathroom_num != 0:
+            bathrooms_dropdown = self.wait.until(EC.visibility_of_element_located(
+                (By.XPATH, '//*[@id="root"]/section/section[2]/form/div/div[2]/div[2]/div[3]/div/select')))
+            bathroom_selector = Select(bathrooms_dropdown)
+            bathroom_selector.select_by_visible_text(f"+{bathroom_num} Bathrooms")
+
+        # Select the parking number
+        if parking_num != 0:
+            parking_dropdown = self.wait.until(EC.visibility_of_element_located(
+                (By.XPATH, '//*[@id="root"]/section/section[2]/form/div/div[2]/div[2]/div[4]/div/select')))
+            parking_selector = Select(parking_dropdown)
+            parking_selector.select_by_visible_text(f"+{parking_num} Parking")
 
         # search property by suburb name.
         search = self.wait.until(
@@ -82,7 +97,7 @@ import time
 if __name__ == "__main__":
     scraper_instance = Scraper()
     scraper_instance.search_property("Wollert","vic", 3750)
-    scraper_instance.apply_filter_on_search(property_type_selected="House", bedrooms_size=2)
+    scraper_instance.apply_filter_on_search(property_type_selected="House", parking_num=2)
     time.sleep(10)  # Keep the browser open for 10 seconds
     scraper_instance.quit()
 
