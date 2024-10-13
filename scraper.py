@@ -148,4 +148,3 @@ class Scraper:
             property_links.append(href)
 
         return property_links
-
