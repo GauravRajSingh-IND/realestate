@@ -1,8 +1,10 @@
 import pandas as pd
+import json
 
 class Customer:
 
     def __init__(self):
+        
         self.customers = pd.read_csv("customers_data.csv")
         self.customer_data_len = len(self.customers)
 
@@ -37,7 +39,25 @@ class Customer:
         # Loop over each phone number and check if the number already exist.
         return phone_number in self.customers['Phone_number'].values
 
+    def add_suburbs_interested(self,phone_number:int, state:list, suburbs:list, pincode:list):
 
-customer = Customer()
-customer.add_customer(customer_name="Gaurav Raj Singh", phone_number=449932325, state="vic", pincode=3083, suburb="Bundoora",
-                      email="grsmanohar@gmail.com")
+        # Open json file.
+        with open("customer_suburbs.json", 'r') as file:
+            customer_data = json.load(file)
+
+        # create a dictionary of new customer.
+        data =  {
+                 "suburbs":suburbs,
+                 "pincode":pincode,
+                 "state":state
+                }
+
+        # add new data to customer data json file.
+        customer_data[phone_number] = data
+
+        # Write back to json file.
+        with open("customer_suburbs.json", "w") as file:
+            json.dump(customer_data, file, indent=4)
+
+test = Customer()
+test.add_suburbs_interested(phone_number=449932325, state=['vic', 'qld'], suburbs=['Bundoora', 'Wollert'], pincode=[3083, 3006])
