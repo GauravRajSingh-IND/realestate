@@ -4,7 +4,7 @@ import json
 class Customer:
 
     def __init__(self):
-        
+
         self.customers = pd.read_csv("customers_data.csv")
         self.customer_data_len = len(self.customers)
 
@@ -32,6 +32,7 @@ class Customer:
 
         # new customer added, update the list.
         self.customer_data_len += 1
+
         return None
 
     def check_customer(self, phone_number):
@@ -39,7 +40,7 @@ class Customer:
         # Loop over each phone number and check if the number already exist.
         return phone_number in self.customers['Phone_number'].values
 
-    def add_suburbs_interested(self,phone_number:int, state:list, suburbs:list, pincode:list):
+    def add_suburbs_interested(self, phone_number:int, state:list, suburbs:list, pincode:list):
 
         # Open json file.
         with open("customer_suburbs.json", 'r') as file:
@@ -59,5 +60,30 @@ class Customer:
         with open("customer_suburbs.json", "w") as file:
             json.dump(customer_data, file, indent=4)
 
-test = Customer()
-test.add_suburbs_interested(phone_number=449932325, state=['vic', 'qld'], suburbs=['Bundoora', 'Wollert'], pincode=[3083, 3006])
+
+    def delete_customer_data(self, phone_number):
+        """
+        This function takes phone number of the customer and delete the customer data
+        from both customer json and csv file. Once the data is delete from the database
+        no further communication is done.
+        :param phone_number: number of the customer
+        :return:
+        """
+
+        # read data from customer data csv file.
+        data = pd.read_csv("customers_data.csv")
+        data.drop(data[data['Phone_number'] == phone_number].index, inplace=True)
+
+        # save the data again to the same file.
+        data.to_csv('customers_data.csv', mode='w', index=False, header=True)
+
+        # read json data.
+        with open("customer_suburbs.json", "r") as file:
+            json_data = json.load(file)
+
+        if str(phone_number) in json_data:
+            json_data.pop(str(phone_number))
+
+        # saving the updated JSON data back to the file
+        with open("customer_suburbs.json", "w") as file:
+            json.dump(json_data, file, indent=4)
